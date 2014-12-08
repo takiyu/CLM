@@ -1,0 +1,7 @@
+bin
+obj
+*.swp
+*.swo
+*.depend
+*.out
+*.o
