@@ -1,16 +1,4 @@
 #include "appearance.h"
-#include <opencv2/contrib/contrib.hpp>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/objdetect/objdetect.hpp>
-#include <opencv2/ml/ml.hpp>
-#include <opencv2/gpu/gpu.hpp>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <string>
 
 using namespace cv;
 using namespace std;
@@ -72,52 +60,6 @@ void App::warp(const Mat& src_image, Mat& dst_image, const vector<Point2f>& src_
 		}
 		this->warpTriangle(src_image, dst_image, src_tri, dst_tri);
 	}
-}
-
-//三角形でwarp(gpu)
-void App::warpTriangleGpu(const gpu::GpuMat& src_image, gpu::GpuMat& dst_image, const Point2f src_tri[], const Point2f dst_tri[]){
-// 	if(dst_image.empty()) dst_image = src_image.clone();
-
-	//アフィン変換行列を取得
-	Mat aff_mat = getAffineTransform(src_tri, dst_tri);
-
-	//アフィン変換
-	gpu::GpuMat affed_image;
-	warpAffine(gpu::GpuMat(src_image), affed_image, aff_mat, Size(dst_image.cols, dst_image.rows));
-
-
-	vector<Point> mask_points(3);
-	for(int i = 0; i < 3; i++){
-		mask_points[i] = dst_tri[i];
-	}
-
-	//くり抜き用マスク
-	Mat mask = Mat::zeros(dst_image.rows, dst_image.cols, dst_image.type());
-	fillConvexPoly(mask, mask_points, Scalar(255,255,255));
-
-	//くり抜き
-	affed_image.copyTo(dst_image, gpu::GpuMat(mask));
-
-// 	imshow("dst", dst_image);
-// 	waitKey();
-}
-//三角形を取得してwarp
-void App::warpGpu(const Mat& src_image, Mat& dst_image, const vector<Point2f>& src_points, const vector<Point2f>& dst_points){
-
-	gpu::GpuMat src_image_gpu(src_image);
-	gpu::GpuMat dst_image_gpu(dst_image);
-
-	for(int i = 0; i < this->triangle_map.size(); i++){
-		Point2f src_tri[3];
-		Point2f dst_tri[3];
-		for(int j = 0; j < 3; j++){
-			src_tri[j] = src_points[ this->triangle_map[i][j] ];
-			dst_tri[j] = dst_points[ this->triangle_map[i][j] ];
-		}
-		this->warpTriangleGpu(src_image_gpu, dst_image_gpu, src_tri, dst_tri);
-	}
-
-	dst_image = Mat(dst_image_gpu);
 }
 
 //形状から三角形idx群を生成

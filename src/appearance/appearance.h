@@ -1,13 +1,10 @@
 #ifndef APPEARANCE_H_141129
 #define APPEARANCE_H_141129
 
-#include <opencv2/contrib/contrib.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
-#include <opencv2/ml/ml.hpp>
-#include <opencv2/gpu/gpu.hpp>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -30,12 +27,6 @@ public:
 	void warpTriangle(const Mat& src_image, Mat& dst_image, const Point2f src_tri[], const Point2f dst_tri[]);
 	//三角形を取得してwarp
 	void warp(const Mat& src_im, Mat& dst_im, const vector<Point2f>& src_points, const vector<Point2f>& dst_points);
-
-	//三角形でwarp(gpu)
-	void warpTriangleGpu(const gpu::GpuMat& src_image, gpu::GpuMat& dst_image, const Point2f src_tri[], const Point2f dst_tri[]);
-	//三角形を取得してwarp(gpu)
-	void warpGpu(const Mat& src_im, Mat& dst_im, const vector<Point2f>& src_points, const vector<Point2f>& dst_points);
-
 
 private:
 	//三角形を生成するMap

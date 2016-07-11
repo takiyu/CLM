@@ -4,12 +4,10 @@
 #include "clm/clm.h"
 #include "io/face_data.h"
 
-#include <opencv2/contrib/contrib.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
-#include <opencv2/ml/ml.hpp>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -28,7 +26,7 @@ int main(int argc, const char *argv[]) {
 
 		return 0;
 	}
-	const string CASCADE_FILE = "/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml";
+	const string CASCADE_FILE = "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt_tree.xml";
 	const string OUT_DIR(argv[1]);
 
 	vector<string> image_names;
