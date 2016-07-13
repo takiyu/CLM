@@ -12,6 +12,7 @@ workspace "RespRobotWorkspace"
   configurations { "release", "debug" }
   language "C++"
   basedir "build"
+  buildoptions { "-std=c++03" }
 
   includedirs { "/usr/local/include" }
   libdirs { "/usr/local/lib" }

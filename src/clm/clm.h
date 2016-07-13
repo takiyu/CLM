@@ -1,76 +1,63 @@
 #ifndef CLM_H_141021
 #define CLM_H_141021
 
-#include "shape.h"
-#include "patch.h"
 #include "detector.h"
+#include "patch.h"
+#include "shape.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
+
 #include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
 #include <string>
+#include <vector>
 
-using namespace cv;
-using namespace std;
-
-//======Clm======
-class Clm{
+// Main Tracking Class
+class Clm {
 public:
-	//コンストラクタ
-	Clm();
-	//コンストラクタ init付き
-	Clm(const string& data_dir,
-		const string& cascade_file);
-	Clm(const string& shape_file,
-		const string& patch_file,
-		const string& detector_file,
-		const string& cascade_file);
-	//初期化
-	void init(const string& data_dir,
-			  const string& cascade_file);
-	void init(const string& shape_file,
-			  const string& patch_file,
-			  const string& detector_file,
-			  const string& cascade_file);
-	//検出、追跡
-	bool track(const Mat& image,
-			   vector<Point2f>& dst_points,
-			   const bool init_flag = false,
-			   const bool use_redetect = true);
+    Clm();
+    Clm(const std::string& data_dir, const std::string& cascade_file);
+    Clm(const std::string& shape_file, const std::string& patch_file,
+        const std::string& detector_file, const std::string& cascade_file);
 
+    void init(const std::string& data_dir, const std::string& cascade_file);
+    void init(const std::string& shape_file, const std::string& patch_file,
+              const std::string& detector_file,
+              const std::string& cascade_file);
 
-	//Shape,Patch,Detectorを学習して保存
-	static void train(const vector<string>& image_names,
-			   const vector<vector<Point2f> >& points_vecs,
-			   const string& CASCADE_FILE,
-			   const vector<int>& symmetry,
-			   const vector<Vec2i>& connections,
-			   const string& OUTPUT_DIR);
+    bool track(const cv::Mat& image, std::vector<cv::Point2f>& dst_points,
+               const bool init_flag = false, const bool use_redetect = true);
 
-	//symmetryを利用して点群を左右反転
-	static void getFlippedPointsVecs(const vector<vector<Point2f> >& src_vecs,
-							  vector<vector<Point2f> >& dst_vecs,
-							  const vector<string>& image_names,
-							  const vector<int>& symmetry);
+    // Train and save shape, patch, detector
+    static void train(const std::vector<std::string>& image_names,
+                      const std::vector<std::vector<cv::Point2f> >& points_vecs,
+                      const std::string& CASCADE_FILE,
+                      const std::vector<int>& symmetry,
+                      const std::vector<cv::Vec2i>& connections,
+                      const std::string& OUTPUT_DIR);
+
+    // Flip points using symmetry
+    static void getFlippedPointsVecs(
+        const std::vector<std::vector<cv::Point2f> >& src_vecs,
+        std::vector<std::vector<cv::Point2f> >& dst_vecs,
+        const std::vector<std::string>& image_names,
+        const std::vector<int>& symmetry);
 
 private:
-	//CLMファイルのデータフォルダ内の名前
-	static const string SHAPE_FILE_NAME;
-	static const string PATCH_FILE_NAME;
-	static const string DETECTOR_FILE_NAME;
+    static const std::string SHAPE_FILE_NAME, PATCH_FILE_NAME,
+        DETECTOR_FILE_NAME;
 
-	//CLM用クラス
-	Shape shape;
-	PatchContainer patch;
-	Detector detector;
+    static const int N_PATCH_SIZES;
+    static const cv::Size PATCH_SIZES[];
 
-	//1フレーム前の座標群
-	vector<Point2f> pre_points;
+    Shape shape;
+    PatchContainer patch;
+    Detector detector;
+
+    // Previous frame points
+    std::vector<cv::Point2f> pre_points;
 };
 
 #endif

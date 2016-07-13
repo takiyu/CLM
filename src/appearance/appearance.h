@@ -2,38 +2,30 @@
 #define APPEARANCE_H_141129
 
 #include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/objdetect/objdetect.hpp>
-#include <iostream>
-#include <fstream>
-#include <sstream>
 #include <vector>
-#include <string>
 
 using namespace cv;
 using namespace std;
 
-class App{
+class App {
 public:
-	//コンストラクタ
-	App();
-	//初期化付きコンストラクタ
-	App(const vector<Point2f> init_shape);
-	//平面分割の初期化
-	void init(const vector<Point2f> init_shape);
+    App();
+    App(const std::vector<cv::Point2f> init_shape);
 
-	//三角形でwarp
-	void warpTriangle(const Mat& src_image, Mat& dst_image, const Point2f src_tri[], const Point2f dst_tri[]);
-	//三角形を取得してwarp
-	void warp(const Mat& src_im, Mat& dst_im, const vector<Point2f>& src_points, const vector<Point2f>& dst_points);
+    void init(const std::vector<cv::Point2f> init_shape);
+
+    void warp(const cv::Mat& src_im, cv::Mat& dst_im,
+              const std::vector<cv::Point2f>& src_points,
+              const std::vector<cv::Point2f>& dst_points);
 
 private:
-	//三角形を生成するMap
-	vector<vector<int> > triangle_map;
+    std::vector<std::vector<int> > triangle_map;
 
-	//形状から三角形idx群を生成
-	void makeTriangleIdxMap(const vector<Point2f>& src_points, vector<vector<int> >& tri_idxs);
+    void makeTriangleIdxMap(const std::vector<cv::Point2f>& src_points,
+                            std::vector<std::vector<int> >& tri_idxs);
+
+    void warpTriangle(const cv::Mat& src_image, cv::Mat& dst_image,
+                      const cv::Point2f src_tri[], const cv::Point2f dst_tri[]);
 };
 
 #endif
