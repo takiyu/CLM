@@ -18,9 +18,9 @@ cd build
 make
 ```
 
-## Run with trained model ##
 Following commands can be executed in `build` directory.
 
+## Run with trained model ##
 ```
 ./bin/release/main
 ```
@@ -28,6 +28,7 @@ Following commands can be executed in `build` directory.
 To configure cascade path, set new path with `--cascade` argument,
 and CLM model also can be changed with `--clm` (default model is trained using `helen` dataset).
 Web camera will be used by default, and image can be used with `--image`.
+
 <img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/main_lena.png" width="360px">
 
 ## Train ##
@@ -38,18 +39,18 @@ Please download `MUCT` dataset, expand it and execute following command (Change 
 ./bin/release/train --out OUTPUT/DIR --muct_image_dir YOUR/muct/jpg/ --muct_lm_file YOUR/muct/muct-landmarks/muct76-opencv.csv
 ```
 
-### Visualize shape ###
+### Visualizing shape ###
 <img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/train_shape.gif" width="280px">
 
-### Visualize patch ###
+### Visualizing patch ###
 <img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/train_patch.png" width="280px">
 
-### Visualize detector ###
+### Visualizing detector ###
 <img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/train_detector.png" width="280px">
 
 ## Warping demo ##
 ```
-./bin/release/yukiti
+j/bin/release/yukiti
 ```
 
-<img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/yukiti.png" width="500px">
+<img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/yukiti.png" width="700px">
