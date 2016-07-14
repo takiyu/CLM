@@ -49,8 +49,10 @@ Please download `MUCT` dataset, expand it and execute following command (Change 
 <img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/train_detector.png" width="280px">
 
 ## Warping demo ##
+`yukiti` is a demo program which tracks your face using web camera and warps Japanese bill.
+
 ```
-j/bin/release/yukiti
+./bin/release/yukiti
 ```
 
 <img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/yukiti.png" width="700px">
