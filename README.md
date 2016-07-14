@@ -59,7 +59,7 @@ Please download `MUCT` dataset, expand it and execute following command (Change 
 
 ## Warping demo 2 ##
 `yukiti2` is also a demo program.
-This is replace your face to bill's one.
+This replaces your face to bill's one.
 
 ```
 ./bin/release/yukiti2
