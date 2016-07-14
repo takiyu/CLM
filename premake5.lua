@@ -6,6 +6,7 @@ exec_sources = {
   "./src/main.cpp",
   "./src/train.cpp",
   "./src/yukiti.cpp",
+  "./src/yukiti2.cpp",
 }
 
 workspace "RespRobotWorkspace"

@@ -39,16 +39,16 @@ Please download `MUCT` dataset, expand it and execute following command (Change 
 ./bin/release/train --out OUTPUT/DIR --muct_image_dir YOUR/muct/jpg/ --muct_lm_file YOUR/muct/muct-landmarks/muct76-opencv.csv
 ```
 
-### Visualizing shape ###
+### Visualized shape ###
 <img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/train_shape.gif" width="280px">
 
-### Visualizing patch ###
+### Visualized patch ###
 <img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/train_patch.png" width="280px">
 
-### Visualizing detector ###
+### Visualized detector ###
 <img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/train_detector.png" width="280px">
 
-## Warping demo ##
+## Warping demo 1 ##
 `yukiti` is a demo program which tracks your face using web camera and warps Japanese bill.
 
 ```
@@ -56,3 +56,13 @@ Please download `MUCT` dataset, expand it and execute following command (Change 
 ```
 
 <img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/yukiti.png" width="700px">
+
+## Warping demo 2 ##
+`yukiti2` is also a demo program.
+This is replace your face to bill's one.
+
+```
+./bin/release/yukiti2
+```
+
+<img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/yukiti2.png" width="400px">

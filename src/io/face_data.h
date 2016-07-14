@@ -19,9 +19,6 @@ void initMuctSymmetry(std::vector<int>& symmetry);
 void extractEyeAndNosePoints(
     std::vector<std::vector<cv::Point2f> >& points_vecs,
     std::vector<int>& symmetry, std::vector<cv::Vec2i>& connections);
-// Extract important points
-void reduceMuctPoints(const std::vector<cv::Point2f>& src_points,
-                      std::vector<cv::Point2f>& dst_points);
 
 /*===== Helen Dataset =====*/
 // Get filenames in a directory (must be absolute path)
@@ -37,8 +34,3 @@ void getFileNamesInDir(const std::string& src_dir,
 void initHelenConnections(std::vector<cv::Vec2i>& connections);
 // Initialize symmetry
 void initHelenSymmetry(std::vector<int>& symmetry);
-// Extract important points
-void reduceHelenPoints(const std::vector<cv::Point2f>& src_points,
-                       std::vector<cv::Point2f>& dst_points);
-void reduceHelenPoints2(const std::vector<cv::Point2f>& src_points,
-                        std::vector<cv::Point2f>& dst_points);

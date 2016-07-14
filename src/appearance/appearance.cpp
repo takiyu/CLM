@@ -6,17 +6,17 @@
 using namespace cv;
 using namespace std;
 
-App::App() {}
+Appearance::Appearance() {}
 
-App::App(const vector<Point2f> init_shape) { init(init_shape); }
+Appearance::Appearance(const vector<Point2f> init_shape) { init(init_shape); }
 
-void App::init(const vector<Point2f> init_shape) {
+void Appearance::init(const vector<Point2f> init_shape) {
     makeTriangleIdxMap(init_shape, this->triangle_map);
 }
 
-void App::warp(const Mat& src_image, Mat& dst_image,
-               const vector<Point2f>& src_points,
-               const vector<Point2f>& dst_points) {
+void Appearance::warp(const Mat& src_image, Mat& dst_image,
+                      const vector<Point2f>& src_points,
+                      const vector<Point2f>& dst_points) {
     // Obtain triangles and warp
     for (int i = 0; i < this->triangle_map.size(); i++) {
         Point2f src_tri[3];
@@ -29,8 +29,8 @@ void App::warp(const Mat& src_image, Mat& dst_image,
     }
 }
 
-void App::makeTriangleIdxMap(const vector<Point2f>& src_points,
-                             vector<vector<int> >& tri_idxs) {
+void Appearance::makeTriangleIdxMap(const vector<Point2f>& src_points,
+                                    vector<vector<int> >& tri_idxs) {
     tri_idxs.clear();
 
     Rect rect_container = boundingRect(src_points);
@@ -77,8 +77,9 @@ void App::makeTriangleIdxMap(const vector<Point2f>& src_points,
     }
 }
 
-void App::warpTriangle(const Mat& src_image, Mat& dst_image,
-                       const Point2f src_tri[], const Point2f dst_tri[]) {
+void Appearance::warpTriangle(const Mat& src_image, Mat& dst_image,
+                              const Point2f src_tri[],
+                              const Point2f dst_tri[]) {
     // 	if(dst_image.empty()) dst_image = src_image.clone();
 
     // Affine transform
@@ -96,7 +97,7 @@ void App::warpTriangle(const Mat& src_image, Mat& dst_image,
     Mat mask = Mat::zeros(dst_image.rows, dst_image.cols, CV_8UC1);
     fillConvexPoly(mask, mask_points, Scalar(255));
 
-    // Apply mask
+    // Appearancely mask
     affed_image.copyTo(dst_image, mask);
 
     // 	imshow("dst", dst_image);

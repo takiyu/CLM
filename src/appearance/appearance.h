@@ -7,10 +7,10 @@
 using namespace cv;
 using namespace std;
 
-class App {
+class Appearance {
 public:
-    App();
-    App(const std::vector<cv::Point2f> init_shape);
+    Appearance();
+    Appearance(const std::vector<cv::Point2f> init_shape);
 
     void init(const std::vector<cv::Point2f> init_shape);
 

@@ -20,11 +20,19 @@
 using namespace cv;
 using namespace std;
 
-void insertCornerPoints(vector<Point2f>& points, const Mat& img) {
-    points.push_back(Point2f(0, 0));
-    points.push_back(Point2f(img.cols, 0));
-    points.push_back(Point2f(img.cols, img.rows));
-    points.push_back(Point2f(0, img.rows));
+void fillMask(const vector<Point2f>& points, Mat& mask) {
+    assert(mask.type() == CV_8UC1);
+    // vector<Point2f> -> vector<Point>
+    vector<Point> tmp_points(points.size());
+    for (int i = 0; i < points.size(); i++) {
+        const Point2f& pt = points[i];
+        tmp_points[i] = Point(pt.x, pt.y);
+    }
+
+    // Create mask
+    vector<Point> hull;
+    convexHull(tmp_points, hull);
+    fillConvexPoly(mask, hull, Scalar(255));
 }
 
 int main(int argc, const char* argv[]) {
@@ -59,13 +67,7 @@ int main(int argc, const char* argv[]) {
     read(node["Points"], bill_shape);
 
     // Create editing region
-    const int BILL_RECT_OFFSET = 50;
     Rect BILL_RECT = boundingRect(bill_shape);
-    Rect ORL_BILL_RECT = BILL_RECT;
-    BILL_RECT.x -= BILL_RECT_OFFSET;
-    BILL_RECT.y -= BILL_RECT_OFFSET;
-    BILL_RECT.width += BILL_RECT_OFFSET * 2;
-    BILL_RECT.height += BILL_RECT_OFFSET * 2;
 
     // Apply region
     Mat orl_bill_image = bill_image_full(BILL_RECT).clone();
@@ -74,11 +76,8 @@ int main(int argc, const char* argv[]) {
     }
 
     //===== Initialize Appearance =====
-    // Insert image corner points
-    vector<Point2f> corner_bill_shape = bill_shape;
-    insertCornerPoints(corner_bill_shape, orl_bill_image);
     // Appearance
-    Appearance app(corner_bill_shape);
+    Appearance app(bill_shape);
 
     //====== Initialize ======
     // Initialize connections and symmetry
@@ -97,12 +96,11 @@ int main(int argc, const char* argv[]) {
         cerr << "No Webcam." << endl;
         return 1;
     }
-    Mat orl_image, image;
-    vector<Point2f> orl_points, points;
+    Mat image;
+    vector<Point2f> points;
 
     bool init_flag = false;
-    bool draw_src_points_flag = true;
-    bool draw_bill_points_flag = false;
+    bool draw_src_points_flag = false;
     bool output_fps_flag = true;
     bool auto_reset_flag = true;
 
@@ -110,44 +108,55 @@ int main(int argc, const char* argv[]) {
     int current_fps = 15;
 
     while (true) {
-        cap >> orl_image;
-        flip(orl_image, orl_image, 1);
-        image = orl_image;
+        cap >> image;
+        flip(image, image, 1);
 
         // Track
         if (clm.track(image, points, init_flag, true)) {
             init_flag = false;
-            orl_points = points;
-
-            // Setup current points to warp
-            // Fit points to bill region
-            Rect app_bounding = boundingRect(points);
-            Shape::shiftPoints(points,
-                               (app_bounding.br() + app_bounding.tl()) * -0.5);
-            Shape::resizePoints(
-                points, ORL_BILL_RECT.height / (float)app_bounding.height);
-            Shape::shiftPoints(points,
-                               Point2f(ORL_BILL_RECT.size()) * 0.5 +
-                                   Point2f(BILL_RECT_OFFSET, BILL_RECT_OFFSET));
-            // Insert image corner points
-            insertCornerPoints(points, orl_bill_image);
 
             // Image region to write over
-            Mat bill_image = bill_image_full(BILL_RECT);
+            Rect bbox = boundingRect(points);
+            // check bbox position
+            bool valid_bbox = (0 <= bbox.x && 0 <= bbox.y &&
+                               bbox.x + bbox.width < image.cols &&
+                               bbox.y + bbox.height < image.rows);
+            if (valid_bbox) {
+                // ROI for speed up
+                Mat warped_image = image(bbox).clone();
+                for (int i = 0; i < points.size(); i++) {
+                    points[i] -= Point2f(bbox.x, bbox.y);
+                }
 
-            // Warp
-            app.warp(orl_bill_image, bill_image, corner_bill_shape, points);
+                // Warp
+                app.warp(orl_bill_image, warped_image, bill_shape, points);
 
-            // Draw tracking result
-            if (draw_src_points_flag) {
-                Shape::drawPoints(orl_image, orl_points, Scalar(0, 255, 0), 2,
-                                  connections);
+                // Create mask
+                Mat mask = Mat::zeros(bbox.height, bbox.width, CV_8UC1);
+                fillMask(points, mask);
+
+                // Correct warped_image's shading
+                int blur_amount = int(bbox.width * 0.4f) | 1;  // odd
+                Size blur_kernel(blur_amount, blur_amount);
+                Mat image_blur, bill_blur;
+                GaussianBlur(image(bbox), image_blur, blur_kernel, 0);
+                GaussianBlur(warped_image, bill_blur, blur_kernel, 0);
+                warped_image.convertTo(warped_image, CV_32FC3);
+                image_blur.convertTo(image_blur, CV_32FC3);
+                bill_blur.convertTo(bill_blur, CV_32FC3);
+                cv::multiply(warped_image, image_blur, warped_image);
+                cv::divide(warped_image, bill_blur, warped_image);
+                warped_image.convertTo(warped_image, CV_8UC3);
+
+                // Over write
+                warped_image.copyTo(image(bbox), mask);
+
+                // Draw tracking result
+                if (draw_src_points_flag) {
+                    Shape::drawPoints(image, points, Scalar(0, 255, 0), 2,
+                                      connections);
+                }
             }
-            if (draw_bill_points_flag) {
-                Shape::drawPoints(bill_image, points, Scalar(0, 255, 0), 2);
-            }
-
-            resize(bill_image, bill_image, Size(), 1.5, 1.5, INTER_LINEAR);
         }
 
         current_fps = fps.getFps();
@@ -157,8 +166,7 @@ int main(int argc, const char* argv[]) {
 
         std::cout << "auto reset:" << auto_reset_flag << std::endl;
 
-        imshow("bill", bill_image_full);
-        imshow("image", orl_image);
+        imshow("image", image);
         char key = waitKey(5);
 
         // Exit
@@ -169,8 +177,6 @@ int main(int argc, const char* argv[]) {
         // Drawing flags
         else if (key == 'm')
             draw_src_points_flag = !draw_src_points_flag;
-        else if (key == 'b')
-            draw_bill_points_flag = !draw_bill_points_flag;
         // Fps flag
         else if (key == 'f')
             output_fps_flag = !output_fps_flag;
