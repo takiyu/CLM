@@ -19,27 +19,65 @@
 using namespace cv;
 using namespace std;
 
-const string CASCADE_FILE =
-    "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml";
-const string CLM_PATH = "../data/helen_default";
-
 int main(int argc, const char *argv[]) {
+    // ===== Arguments =====
+    string cascade_file =
+        "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml";
+    string clm_path = "../data/helen_default";
+    string dataset_mode = "helen";
+    string image_path = "";
+    for (int i = 1; i < argc; i++) {
+        string arg(argv[i]);
+        if (arg == "--cascade") {
+            cascade_file = string(argv[++i]);
+        } else if (arg == "--clm") {
+            clm_path = string(argv[++i]);
+        } else if (arg == "--datamode") {
+            dataset_mode = string(argv[++i]);
+        } else if (arg == "--image") {
+            image_path = string(argv[++i]);
+        } else if (arg == "-h") {
+            cout << "Arguments" << endl;
+            cout << " --cascade <path>" << endl;
+            cout << " --clm <path>" << endl;
+            cout << " --datamode [helen/muct]" << endl;
+            cout << " --image <path>" << endl;
+            return 0;
+        }
+    }
+    cout << " >> Cascade file: " << cascade_file << endl;
+    cout << " >> CLM path: " << clm_path << endl;
+    cout << " >> Data mode: " << dataset_mode << endl;
+    cout << " >> Image path: " << image_path << endl;
+    cout << endl;
+
     // ====== Initialize ======
     // Initialize connections and symmetry
     vector<int> symmetry;
     vector<Vec2i> connections;
-    initHelenConnections(connections);
-    initHelenSymmetry(symmetry);
+    if (dataset_mode == "helen") {
+        initHelenConnections(connections);
+        initHelenSymmetry(symmetry);
+    } else if (dataset_mode == "muct") {
+        initMuctConnections(connections);
+        initMuctSymmetry(symmetry);
+    } else {
+        cout << "Invalid data mode" << endl;
+        return 1;
+    }
     // CLM
-    Clm clm(CLM_PATH, CASCADE_FILE);
+    Clm clm(clm_path, cascade_file);
     // Fps
     FpsCounter fps;
 
     // ====== Tracking ======
-    VideoCapture cap(0);
-    if (!cap.isOpened()) {
-        cerr << "No Webcam." << endl;
-        return 1;
+    VideoCapture cap;
+    if (image_path.empty()) {
+        cap.open(0);
+        if (!cap.isOpened()) {
+            cerr << "No Webcam." << endl;
+            return 1;
+        }
     }
     Mat orl_image, image;
     vector<Point2f> points;
@@ -48,8 +86,12 @@ int main(int argc, const char *argv[]) {
     bool output_fps_flag = true;
 
     while (true) {
-        cap >> orl_image;
-        flip(orl_image, orl_image, 1);
+        if (image_path.empty()) {
+            cap >> orl_image;
+            flip(orl_image, orl_image, 1);
+        } else {
+            orl_image = imread(image_path);
+        }
         image = orl_image;
 
         // track

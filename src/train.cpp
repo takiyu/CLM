@@ -18,29 +18,42 @@
 using namespace cv;
 using namespace std;
 
-const string CASCADE_FILE =
-    "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml";
-
-// MUCT
-// const string MUCT_IMAGE_DIR = "/media/sf_DocumentFolder/face/MUCT/jpg/";
-// const string MUCT_LM_FILE = MUCT_IMAGE_DIR +
-// "muct-landmarks/muct76-opencv.csv";
-
-// Helen
-const string HELEN_IMAGE_DIR =
-    "/mnt/storage/OnlineStorage/GoogleDrive/Documents/face/helen/trainset/"
-    "Image";
-const string HELEN_POINT_DIR =
-    "/mnt/storage/OnlineStorage/GoogleDrive/Documents/face/helen/trainset/"
-    "Points";
-
 int main(int argc, const char *argv[]) {
-    if (argc != 2) {
-        cout << "=== Usage ===" << endl;
-        cout << "train.out <out dir>" << endl;
-        return 0;
+    // ===== Arguments =====
+    string out_dir = "";
+    string cascade_file =
+        "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml";
+    string muct_image_dir = "./muct/jpg/";
+    string muct_lm_file = "./muct/muct-landmarks/muct76-opencv.csv";
+    for (int i = 1; i < argc; i++) {
+        string arg(argv[i]);
+        if (arg == "--out") {
+            out_dir = string(argv[++i]);
+        } else if (arg == "--cascade") {
+            cascade_file = string(argv[++i]);
+        } else if (arg == "--muct_image_dir") {
+            muct_image_dir = string(argv[++i]);
+        } else if (arg == "--muct_lm_file") {
+            muct_lm_file = string(argv[++i]);
+        } else if (arg == "-h") {
+            cout << "Arguments" << endl;
+            cout << " --out <path>" << endl;
+            cout << " --cascade <path>" << endl;
+            cout << " --muct_image_dir <path>" << endl;
+            cout << " --muct_lm_file <path>" << endl;
+            return 0;
+        }
     }
-    const string OUT_DIR(argv[1]);
+    cout << " >> Output directory: " << out_dir << endl;
+    cout << " >> Cascade file: " << cascade_file << endl;
+    cout << " >> MUCT image dir: " << muct_image_dir << endl;
+    cout << " >> MUCT landmark: " << muct_lm_file << endl;
+    cout << endl;
+
+    if (out_dir.empty()) {
+        cout << "No output directory argument" << endl;
+        return 1;
+    }
 
     vector<string> image_names;
     vector<vector<Point2f> > points_vecs;
@@ -48,20 +61,23 @@ int main(int argc, const char *argv[]) {
     vector<Vec2i> connections;
 
     //====== MUCT Data ====== begin
-    // readMUCTLandMarksFile(MUCT_LM_FILE, MUCT_IMAGE_DIR, image_names,
-    // points_vecs);
-    // removeIncompleteShape(points_vecs, image_names);
-    // initMuctConnections(connections);
-    // initMuctSymmetry(symmetry);
+    readMUCTLandMarksFile(muct_lm_file, muct_image_dir, image_names,
+                          points_vecs);
+    removeIncompleteShape(points_vecs, image_names);
+    initMuctConnections(connections);
+    initMuctSymmetry(symmetry);
     //====== MUCT Data ====== end
 
-    //====== Helen Data ====== begin
-    readHelenFiles(HELEN_IMAGE_DIR, HELEN_POINT_DIR, image_names, points_vecs);
-    initHelenConnections(connections);
-    initHelenSymmetry(symmetry);
+    //====== Helen Data (Broken now) (TODO: Fix) ====== begin
+    // cout << "Load helen dataset" << endl;
+    // readHelenFiles(HELEN_IMAGE_DIR, HELEN_POINT_DIR, image_names,
+    // points_vecs);
+    // initHelenConnections(connections);
+    // initHelenSymmetry(symmetry);
     //====== Helen Data====== end
 
-    Clm::train(image_names, points_vecs, CASCADE_FILE, symmetry, connections,
-               OUT_DIR);
+    cout << "Start to train" << endl;
+    Clm::train(image_names, points_vecs, cascade_file, symmetry, connections,
+               out_dir);
     return 0;
 }

@@ -20,10 +20,6 @@
 using namespace cv;
 using namespace std;
 
-const string CASCADE_FILE =
-    "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml";
-const string CLM_PATH = "../data/helen_default";
-
 void insertCornerPoints(vector<Point2f>& points, const Mat& img) {
     points.push_back(Point2f(0, 0));
     points.push_back(Point2f(img.cols, 0));
@@ -32,6 +28,27 @@ void insertCornerPoints(vector<Point2f>& points, const Mat& img) {
 }
 
 int main(int argc, const char* argv[]) {
+    // ===== Arguments =====
+    string cascade_file =
+        "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml";
+    string clm_path = "../data/helen_default";
+    for (int i = 1; i < argc; i++) {
+        string arg(argv[i]);
+        if (arg == "--cascade") {
+            cascade_file = string(argv[++i]);
+        } else if (arg == "--clm") {
+            clm_path = string(argv[++i]);
+        } else if (arg == "-h") {
+            cout << "Arguments" << endl;
+            cout << " --cascade <path>" << endl;
+            cout << " --clm <path>" << endl;
+            return 0;
+        }
+    }
+    cout << " >> Cascade file: " << cascade_file << endl;
+    cout << " >> CLM path: " << clm_path << endl;
+    cout << endl;
+
     //====== Initialize Bill Data =====
     // Load image
     Mat bill_image_full = imread("../data/yukiti_data/bill_yukiti.jpeg");
@@ -72,7 +89,7 @@ int main(int argc, const char* argv[]) {
     initHelenConnections(connections);
     initHelenSymmetry(symmetry);
     // CLM
-    Clm clm("../data/helen_default", CASCADE_FILE);
+    Clm clm(clm_path, cascade_file);
     // Fps
     FpsCounter fps;
 

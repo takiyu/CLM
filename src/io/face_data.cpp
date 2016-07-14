@@ -34,7 +34,7 @@ void readMUCTLandMarksFile(const string lm_file_name,
             // corrupted data || ignore flipped image
             continue;
         }
-        ml_name = image_dir_name + ml_name + ".jpg";
+        ml_name = image_dir_name + "/" + ml_name + ".jpg";
 
         //---get index---
         string ml_index;

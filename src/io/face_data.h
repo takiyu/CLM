@@ -28,10 +28,11 @@ void reduceMuctPoints(const std::vector<cv::Point2f>& src_points,
 void getFileNamesInDir(const std::string& src_dir,
                        std::vector<std::string>& dst_names,
                        const int max_count);
-// Read Helen
-void readHelenFiles(const std::string& image_dir, const std::string& point_dir,
-                    std::vector<std::string>& image_names,
-                    std::vector<std::vector<cv::Point2f> >& points_vecs);
+// Read Helen (Broken now)
+// void readHelenFiles(const std::string& image_dir, const std::string&
+// point_dir,
+//                     std::vector<std::string>& image_names,
+//                     std::vector<std::vector<cv::Point2f> >& points_vecs);
 // Initialize connections
 void initHelenConnections(std::vector<cv::Vec2i>& connections);
 // Initialize symmetry
