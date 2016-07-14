@@ -1,17 +1,55 @@
 # CLM #
+"Constrained Local Models" based on "Mastering OpenCV Chapter6".
+
+I refactored all sources and add warping demo.
+Tracking accuracy is not so high, but more readable code than original to study CLM.
 
 ## Requirements ##
 * Linux (testing Ubuntu 14.04 and Arch Linux)
 * OpenCV 3.1 (2.4 is also supported if replace link options in `premake5.lua`)
 * premake 5
 
-## Build and Run ##
-Edit `premake5.lua` and `CASCADE_FILE` variable in `src/main.cpp`, `src/train.cpp` and `yukiti.cpp` for your environment.
+## Build ##
+Edit `premake5.lua` for your environment.
 
 ```
 premake5 gmake
 cd build
 make
+```
+
+## Run with trained model ##
+Following commands can be executed in `build` directory.
+
+```
 ./bin/release/main
+```
+
+To configure cascade path, set new path with `--cascade` argument,
+and CLM model also can be changed with `--clm` (default model is trained using `helen` dataset).
+Web camera will be used by default, and image can be used with `--image`.
+<img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/main_lena.png" width="360px">
+
+## Train ##
+Now, `MUCT` dataset is available to train (`helen` mode is broken).
+Please download `MUCT` dataset, expand it and execute following command (Change paths).
+
+```
+./bin/release/train --out OUTPUT/DIR --muct_image_dir YOUR/muct/jpg/ --muct_lm_file YOUR/muct/muct-landmarks/muct76-opencv.csv
+```
+
+### Visualize shape ###
+<img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/train_shape.gif" width="280px">
+
+### Visualize patch ###
+<img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/train_patch.png" width="280px">
+
+### Visualize detector ###
+<img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/train_detector.png" width="280px">
+
+## Warping demo ##
+```
 ./bin/release/yukiti
 ```
+
+<img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/yukiti.png" width="500px">
