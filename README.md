@@ -6,7 +6,7 @@ Tracking accuracy is not so high, but more readable code than original to study 
 
 ## Requirements ##
 * Linux (testing Ubuntu 14.04 and Arch Linux)
-* OpenCV 3.1 (2.4 is also supported if replace link options in `premake5.lua`)
+* OpenCV 3.1 (2.4 is also supported if replaced link options in `premake5.lua`)
 * premake 5
 
 ## Build ##
@@ -59,7 +59,7 @@ Please download `MUCT` dataset, expand it and execute following command (Change 
 
 ## Warping demo 2 ##
 `yukiti2` is also a demo program.
-This replaces your face to bill's one.
+This replaces your face with bill's one.
 
 ```
 ./bin/release/yukiti2
