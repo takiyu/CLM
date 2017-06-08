@@ -17,6 +17,13 @@ premake5 gmake
 cd build
 make
 ```
+or
+```
+mkdir build
+cd build
+cmake ..
+make
+```
 
 Following commands can be executed in `build` directory.
 
