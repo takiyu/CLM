@@ -7,7 +7,7 @@ Tracking accuracy is not so high, but more readable code than original to study 
 ## Requirements ##
 * Linux (testing Ubuntu 14.04 and Arch Linux)
 * OpenCV 3.1 (2.4 is also supported if replaced link options in `premake5.lua`)
-* premake 5
+* premake 5 or CMake
 
 ## Build ##
 Edit `premake5.lua` for your environment.
