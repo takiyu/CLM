@@ -71,5 +71,3 @@ This replaces your face with bill's one.
 ```
 ./bin/release/yukiti2
 ```
-
-<img src="https://raw.githubusercontent.com/takiyu/CLM/master/screenshots/yukiti2.png" width="400px">
